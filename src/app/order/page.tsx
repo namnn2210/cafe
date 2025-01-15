@@ -1,9 +1,11 @@
 'use client';
 
 import { useOrder } from '../context/OrderContext';
+import { useState } from 'react';
 
 export default function OrderPage() {
     const { order } = useOrder();
+    const [paymentMethod, setPaymentMethod] = useState<'cash' | 'qr'>('cash');
 
     const totalPrice = order.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -53,15 +55,50 @@ export default function OrderPage() {
                     <span>{totalPrice.toLocaleString('vi-VN')} VND</span>
                 </div>
 
-                {/* QR Code */}
+                {/* Payment Options */}
                 {order.length > 0 && totalPrice > 0 && (
-                    <div className="mt-6 text-center">
-                        <h2 className="text-lg font-semibold mb-2">Scan to Pay</h2>
-                        <img
-                            src={qrCodeUrl}
-                            alt="QR Code for Payment"
-                            className="mx-auto border border-gray-300 rounded"
-                        />
+                    <div className="mt-6">
+                        <h2 className="text-lg font-semibold mb-4">Select Payment Method</h2>
+                        <div className="flex justify-around mb-4">
+                            <button
+                                className={`px-4 py-2 rounded ${
+                                    paymentMethod === 'cash'
+                                        ? 'bg-green-500 text-white'
+                                        : 'bg-gray-200 text-gray-600'
+                                }`}
+                                onClick={() => setPaymentMethod('cash')}
+                            >
+                                Cash
+                            </button>
+                            <button
+                                className={`px-4 py-2 rounded ${
+                                    paymentMethod === 'qr'
+                                        ? 'bg-green-500 text-white'
+                                        : 'bg-gray-200 text-gray-600'
+                                }`}
+                                onClick={() => setPaymentMethod('qr')}
+                            >
+                                QR Code
+                            </button>
+                        </div>
+
+                        {/* Conditional Rendering for Payment Method */}
+                        {paymentMethod === 'cash' && (
+                            <p className="text-center text-gray-700">
+                                Please pay <strong>{totalPrice.toLocaleString('vi-VN')} VND</strong> in cash at the
+                                counter.
+                            </p>
+                        )}
+                        {paymentMethod === 'qr' && (
+                            <div className="text-center">
+                                <h3 className="text-sm font-medium mb-2">Scan this QR Code to Pay</h3>
+                                <img
+                                    src={qrCodeUrl}
+                                    alt="QR Code for Payment"
+                                    className="mx-auto w-40 h-40 border border-gray-300 rounded"
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
 
