@@ -1,6 +1,7 @@
 'use client';
 
 import { useOrder } from '../context/OrderContext';
+import {Button} from "@nextui-org/react";
 import { useState } from 'react';
 
 const foods = [
@@ -44,7 +45,10 @@ export default function FoodsPage() {
             <h1 className="text-2xl font-bold mb-4 text-center">Foods Menu</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {foods.map((food) => (
-                    <div key={food.id} className="border rounded-lg p-4 shadow hover:shadow-lg transition">
+                    <div
+                        key={food.id}
+                        className="border rounded-lg p-4 shadow hover:shadow-lg transition"
+                    >
                         <img
                             src={food.image}
                             alt={food.name}
@@ -55,13 +59,13 @@ export default function FoodsPage() {
                         <p className="text-green-500 font-semibold mt-1">
                             {food.price.toLocaleString('vi-VN')} VND
                         </p>
-                        <button className={`bg-green-500 text-white px-4 py-2 mt-2 rounded-full hover:bg-green-600 transition transform ${
-                            clickedItemId === food.id ? 'scale-110' : 'scale-100'
-                        }`}
-                                onClick={() => handleAddToOrder(food)}
+                        <Button
+                            className={`w-full ${clickedItemId === food.id ? 'scale-110' : 'scale-100'}`}
+                            color="success"
+                            onPress={() => handleAddToOrder(food)}
                         >
                             Add
-                        </button>
+                        </Button>
                     </div>
                 ))}
             </div>
