@@ -48,6 +48,7 @@ export default function DrinksPage() {
         setSelectedSugarLevel(drink.options.sugarLevels[0]);
         setSelectedIceLevel(drink.options.iceLevels[0]);
         setSelectedToppings([]);
+        // @ts-ignore
         onOpenChange(true);
     };
 
@@ -61,6 +62,7 @@ export default function DrinksPage() {
                     toppings: selectedToppings,
                 },
             });
+            // @ts-ignore
             onOpenChange(false);
             setSelectedDrink(null);
             setSelectedSugarLevel("");
@@ -74,6 +76,11 @@ export default function DrinksPage() {
         setSearchTerm(e.target.value);
         setCurrentPage(1); // Reset to the first page
     };
+
+    const handleCancel = () => {
+        // @ts-ignore
+        onOpenChange(false);
+    }
 
     const filteredDrinks = drinks.filter((drink) =>
         drink.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -146,6 +153,7 @@ export default function DrinksPage() {
             </div>
 
             {/* NextUI Modal */}
+
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="bottom" className="bg-[var(--background)]">
                 <ModalContent>
                     <>
@@ -160,7 +168,7 @@ export default function DrinksPage() {
                                     value={selectedSugarLevel}
                                     onValueChange={(value) => setSelectedSugarLevel(value)}
                                 >
-                                    {selectedDrink?.options.sugarLevels.map((level, index) => (
+                                    {selectedDrink?.options.sugarLevels.map((level: string, index: number) => (
                                         <Radio key={index} value={level}>
                                             {level}%
                                         </Radio>
@@ -175,7 +183,7 @@ export default function DrinksPage() {
                                     value={selectedIceLevel}
                                     onValueChange={(value) => setSelectedIceLevel(value)}
                                 >
-                                    {selectedDrink?.options.iceLevels.map((level, index) => (
+                                    {selectedDrink?.options.iceLevels.map((level: string, index: number) => (
                                         <Radio key={index} value={level}>
                                             {level}%
                                         </Radio>
@@ -190,7 +198,7 @@ export default function DrinksPage() {
                                     value={selectedToppings}
                                     onValueChange={setSelectedToppings}
                                 >
-                                    {selectedDrink?.options.toppings.map((topping, index) => (
+                                    {selectedDrink?.options.toppings.map((topping: string, index: number) => (
                                         <Checkbox key={index} value={topping}>
                                             {topping}
                                         </Checkbox>
@@ -198,8 +206,9 @@ export default function DrinksPage() {
                                 </CheckboxGroup>
                             </div>
                         </ModalBody>
+
                         <ModalFooter>
-                            <Button color="danger" variant="light" onPress={() => onOpenChange(false)}>
+                            <Button color="danger" variant="light" onPress={handleCancel}>
                                 Cancel
                             </Button>
                             <Button color="success" onPress={handleAddToOrder}>
