@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useOrder } from '../context/OrderContext';
 import { Pagination } from '@nextui-org/react';
+import Image from 'next/image';
 
 const foods = [
     { id: 1, name: 'Khoai tây chiên', price: 30000, image: 'https://placehold.co/300x300?text=Khoai+t%C3%A2y+chi%C3%AAn' },
@@ -27,12 +28,10 @@ export default function FoodsPage() {
         addToOrder(food);
     };
 
-    // Filter foods based on search input
     const filteredFoods = foods.filter((food) =>
         food.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Pagination calculations
     const totalPages = Math.ceil(filteredFoods.length / itemsPerPage);
     const paginatedFoods = filteredFoods.slice(
         (currentPage - 1) * itemsPerPage,
@@ -43,7 +42,6 @@ export default function FoodsPage() {
         <main className="p-4 pb-20 bg-[var(--background)]">
             <h1 className="text-2xl font-bold mb-4 text-center">Đồ ăn</h1>
 
-            {/* Search Bar */}
             <div className="relative mb-6">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                     <svg
@@ -65,13 +63,12 @@ export default function FoodsPage() {
                     value={searchTerm}
                     onChange={(e) => {
                         setSearchTerm(e.target.value);
-                        setCurrentPage(1); // Reset to the first page when search term changes
+                        setCurrentPage(1);
                     }}
                     className="w-full pl-10 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300 transition"
                 />
             </div>
 
-            {/* Food Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {paginatedFoods.map((food) => (
                     <div
@@ -79,9 +76,11 @@ export default function FoodsPage() {
                         className="p-4 transition text-center cursor-pointer"
                         onClick={() => handleAddToOrder(food)}
                     >
-                        <img
+                        <Image
                             src={food.image}
                             alt={food.name}
+                            width={300}
+                            height={300}
                             className="w-72 h-72 object-cover mx-auto"
                         />
                         <h2 className="text-lg font-bold mt-4">{food.name}</h2>
@@ -92,7 +91,6 @@ export default function FoodsPage() {
                 ))}
             </div>
 
-            {/* Pagination */}
             <div className="flex justify-center mt-6">
                 <Pagination
                     total={totalPages}

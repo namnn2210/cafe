@@ -2,7 +2,7 @@
 
 import { useOrder } from '../context/OrderContext';
 import { useState } from 'react';
-
+import Image from 'next/image';
 
 export default function OrderPage() {
     const { order, removeOrderItem } = useOrder();
@@ -10,9 +10,8 @@ export default function OrderPage() {
 
     const totalPrice = order.reduce((total, item) => total + item.price * item.quantity, 0);
 
-    // Replace with your actual account details
     const accountNumber = '0021000463899';
-    const bankCode = 'VCB'; // Replace with the bank code
+    const bankCode = 'VCB';
     const accountName = 'NGO NGOC NAM';
     const memo = 'Thanh toan Cafe';
 
@@ -36,7 +35,7 @@ export default function OrderPage() {
         <main className="p-4">
             <div className="max-w-screen-sm mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
                 {/* Header */}
-                <h1 className="text-center text-xl font-bold mb-4">226's Cafe</h1>
+                <h1 className="text-center text-xl font-bold mb-4">226&apos;s Cafe</h1>
                 <p className="text-center text-sm text-gray-500">Đơn hàng của bạn</p>
                 <hr className="my-4 border-gray-300" />
 
@@ -134,10 +133,12 @@ export default function OrderPage() {
                         {paymentMethod === 'qr' && (
                             <div className="text-center">
                                 <h3 className="text-sm font-medium mb-2">Quét mã QR dưới đây để thanh toán</h3>
-                                <img
+                                <Image
                                     src={qrCodeUrl}
                                     alt="QR Code for Payment"
-                                    className="mx-auto w-40 h-40 border border-gray-300 rounded"
+                                    width={160}
+                                    height={160}
+                                    className="mx-auto border border-gray-300 rounded"
                                 />
                                 <button
                                     className="bg-blue-500 text-white px-4 py-2 rounded-full mt-4 hover:bg-blue-600 transition"

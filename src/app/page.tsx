@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 const drinks = [
     { id: 1, name: "Bạc sỉu", price: 30000, image: "https://placehold.co/150x150?text=Bạc+sỉu" },
@@ -23,13 +24,16 @@ export default function HomePage() {
         <main className="p-4">
             {/* Hero Section */}
             <div className="relative bg-gradient-to-r bg-[var(--foreground)] rounded-lg shadow-lg overflow-hidden mb-8">
-                <img
+                <Image
                     src="https://placehold.co/600x300"
                     alt="226 Coffee Hero"
-                    className="absolute inset-0 w-full h-full object-cover opacity-50"
+                    layout="fill"
+                    objectFit="cover"
+                    quality={80}
+                    className="opacity-50"
                 />
                 <div className="relative z-10 text-center text-white p-8">
-                    <h1 className="text-4xl font-bold mb-2">Chào mừng đến với 226's Cafe</h1>
+                    <h1 className="text-4xl font-bold mb-2">Chào mừng đến với 226&apos;s Cafe</h1>
                     <p className="text-lg mb-4">
                         Khám phá các thức uống thủ công và món ăn ngon của chúng tôi. Sự hài lòng của bạn là niềm đam mê của chúng tôi.
                     </p>
@@ -51,14 +55,13 @@ export default function HomePage() {
                 </div>
                 <div className="flex overflow-x-scroll space-x-4 scrollbar-hide">
                     {drinks.map((drink) => (
-                        <div
-                            key={drink.id}
-                            className="min-w-[150px] p-4 transition text-center"
-                        >
-                            <img
+                        <div key={drink.id} className="min-w-[150px] p-4 transition text-center">
+                            <Image
                                 src={drink.image}
                                 alt={drink.name}
-                                className="w-full h-24 object-cover mb-2"
+                                width={150}
+                                height={150}
+                                className="mb-2"
                             />
                             <h3 className="font-bold">{drink.name}</h3>
                             <p>{drink.price.toLocaleString('vi-VN')} VND</p>
@@ -77,14 +80,13 @@ export default function HomePage() {
                 </div>
                 <div className="flex overflow-x-scroll space-x-4 scrollbar-hide">
                     {foods.map((food) => (
-                        <div
-                            key={food.id}
-                            className="min-w-[150px] p-4 transition text-center"
-                        >
-                            <img
+                        <div key={food.id} className="min-w-[150px] p-4 transition text-center">
+                            <Image
                                 src={food.image}
                                 alt={food.name}
-                                className="w-full h-24 object-cover mb-2"
+                                width={150}
+                                height={150}
+                                className="mb-2"
                             />
                             <h3 className="font-bold">{food.name}</h3>
                             <p>{food.price.toLocaleString('vi-VN')} VND</p>

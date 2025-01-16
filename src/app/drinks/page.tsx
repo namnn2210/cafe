@@ -15,9 +15,22 @@ import {
     useDisclosure,
     Pagination,
 } from "@nextui-org/react";
+import Image from 'next/image';
 import { useOrder } from "../context/OrderContext";
 
-const drinks = [
+type Drink = {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    options: {
+        sugarLevels: string[];
+        iceLevels: string[];
+        toppings: string[];
+    };
+};
+
+const drinks: Drink[] = [
     { id: 1, name: "Bạc sỉu", price: 30000, image: "https://placehold.co/300x300?text=Bạc+sỉu", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Pudding", "Boba", "Whipped Cream"] } },
     { id: 2, name: "Đen đá", price: 30000, image: "https://placehold.co/300x300?text=Đen+đá", options: { sugarLevels: ["100", "70", "50"], iceLevels: ["100", "50"], toppings: ["Grass Jelly", "Boba"] } },
     { id: 3, name: "Nâu đá", price: 35000, image: "https://placehold.co/300x300?text=Nâu+đá", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Pudding", "Boba", "Whipped Cream", "Grass Jelly"] } },
@@ -33,22 +46,20 @@ const drinks = [
 export default function DrinksPage() {
     const { addToOrder } = useOrder();
     const { isOpen, onOpenChange } = useDisclosure();
-    const [selectedDrink, setSelectedDrink] = useState<any>(null);
-
+    const [selectedDrink, setSelectedDrink] = useState<Drink | null>(null);
     const [selectedSugarLevel, setSelectedSugarLevel] = useState<string>("");
     const [selectedIceLevel, setSelectedIceLevel] = useState<string>("");
     const [selectedToppings, setSelectedToppings] = useState<string[]>([]);
-
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
 
-    const handleCustomize = (drink: any) => {
+    const handleCustomize = (drink: Drink) => {
         setSelectedDrink(drink);
         setSelectedSugarLevel(drink.options.sugarLevels[0]);
         setSelectedIceLevel(drink.options.iceLevels[0]);
         setSelectedToppings([]);
-        // @ts-ignore
+        // @ts-expect-error: Known type issue with onOpenChange
         onOpenChange(true);
     };
 
@@ -62,7 +73,7 @@ export default function DrinksPage() {
                     toppings: selectedToppings,
                 },
             });
-            // @ts-ignore
+            // @ts-expect-error: Known type issue with onOpenChange
             onOpenChange(false);
             setSelectedDrink(null);
             setSelectedSugarLevel("");
@@ -96,32 +107,19 @@ export default function DrinksPage() {
         <main className="p-4 pb-20 bg-[var(--background)]">
             <h1 className="text-2xl font-bold mb-4 text-center">Đồ uống</h1>
 
-            {/* Search Bar */}
             <div className="relative mb-6">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-gray-400"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.621 3.863l4.528 4.529a1 1 0 01-1.414 1.414l-4.529-4.528A6 6 0 012 8z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                </span>
                 <input
                     type="text"
                     placeholder="Tìm kiếm đồ uống..."
                     value={searchTerm}
-                    onChange={handleSearchChange}
+                    onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setCurrentPage(1);
+                    }}
                     className="w-full pl-10 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300 transition"
                 />
             </div>
 
-            {/* Drink Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {paginatedDrinks.map((drink) => (
                     <div
@@ -129,9 +127,11 @@ export default function DrinksPage() {
                         className="p-4 transition text-center cursor-pointer"
                         onClick={() => handleCustomize(drink)}
                     >
-                        <img
+                        <Image
                             src={drink.image}
                             alt={drink.name}
+                            width={300}
+                            height={300}
                             className="w-72 h-72 object-cover mx-auto"
                         />
                         <h2 className="text-lg font-bold mt-4">{drink.name}</h2>
@@ -142,7 +142,6 @@ export default function DrinksPage() {
                 ))}
             </div>
 
-            {/* Pagination */}
             <div className="flex justify-center mt-6">
                 <Pagination
                     total={totalPages}
@@ -152,14 +151,10 @@ export default function DrinksPage() {
                 />
             </div>
 
-            {/* NextUI Modal */}
-
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="bottom" className="bg-[var(--background)]">
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            Customize {selectedDrink?.name}
-                        </ModalHeader>
+                        <ModalHeader>Customize {selectedDrink?.name}</ModalHeader>
                         <ModalBody>
                             <div className="mb-4">
                                 <h4 className="font-medium mb-2">Sugar Level</h4>
