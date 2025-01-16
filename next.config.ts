@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
         dangerouslyAllowSVG: true, // Enable SVG support
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // Add additional security
     },
+    productionBrowserSourceMaps: true
 };
 
 export default nextConfig;

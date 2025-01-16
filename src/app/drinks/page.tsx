@@ -83,7 +83,7 @@ export default function DrinksPage() {
     };
 
     const handleCancel = () => {
-        // @ts-ignore
+        // @ts-expect-error: Known type issue with onOpenChange
         onOpenChange(false);
     }
 
