@@ -9,8 +9,8 @@ interface OrderItem {
     price: number;
     quantity: number;
     options?: {
-        sugarLevels?: string[];
-        iceLevels?: string[];
+        sugarLevel?: string;
+        iceLevel?: string;
         toppings?: string[];
     };
 }

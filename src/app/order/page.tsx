@@ -3,16 +3,10 @@
 import { useOrder } from '../context/OrderContext';
 import { useState } from 'react';
 
+
 export default function OrderPage() {
-    const { order, updateOrderItem, removeOrderItem } = useOrder();
+    const { order, removeOrderItem } = useOrder();
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'qr'>('cash');
-    const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
-    const [editedQuantity, setEditedQuantity] = useState<number>(1);
-    const [editedOptions, setEditedOptions] = useState<any>({
-        sugarLevel: '',
-        iceLevel: '',
-        toppings: [],
-    });
 
     const totalPrice = order.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -34,21 +28,6 @@ export default function OrderPage() {
         alert('Payment confirmed. Thank you!');
     };
 
-    const startEditingItem = (index: number, item: any) => {
-        setEditingItemIndex(index);
-        setEditedQuantity(item.quantity);
-        setEditedOptions({ ...item.options });
-    };
-
-    const saveEditedItem = (index: number) => {
-        updateOrderItem(index, editedQuantity, editedOptions);
-        setEditingItemIndex(null);
-    };
-
-    const cancelEditing = () => {
-        setEditingItemIndex(null);
-    };
-
     const handleRemoveItem = (index: number) => {
         removeOrderItem(index);
     };
@@ -57,146 +36,46 @@ export default function OrderPage() {
         <main className="p-4">
             <div className="max-w-screen-sm mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
                 {/* Header */}
-                <h1 className="text-center text-xl font-bold mb-4">Cafe Delight</h1>
-                <p className="text-center text-sm text-gray-500">Your Order Receipt</p>
+                <h1 className="text-center text-xl font-bold mb-4">226's Cafe</h1>
+                <p className="text-center text-sm text-gray-500">Đơn hàng của bạn</p>
                 <hr className="my-4 border-gray-300" />
 
                 {/* Itemized List */}
                 <div className="mb-4">
                     {order.length === 0 ? (
-                        <p className="text-center text-gray-500">Your order is empty.</p>
+                        <p className="text-center text-gray-500">Đơn hàng của bạn đang trống</p>
                     ) : (
                         <ul>
                             {order.map((item, index) => (
                                 <li key={`${item.id}-${index}`} className="py-2 border-b last:border-none text-gray-700">
-                                    {editingItemIndex === index ? (
-                                        <div>
-                                            {/* Edit Quantity */}
-                                            <div className="flex items-center justify-between mb-2">
-                                                <input
-                                                    type="number"
-                                                    value={editedQuantity}
-                                                    onChange={(e) => setEditedQuantity(Number(e.target.value))}
-                                                    min="1"
-                                                    className="w-16 border rounded px-2 py-1"
-                                                />
-                                                <button
-                                                    className="text-green-500 font-medium hover:underline"
-                                                    onClick={() => saveEditedItem(index)}
-                                                >
-                                                    Save
-                                                </button>
-                                                <button
-                                                    className="text-red-500 font-medium hover:underline"
-                                                    onClick={cancelEditing}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </div>
-
-                                            {/* Edit Options */}
-                                            <div>
-                                                <h4 className="font-medium">Options</h4>
-
-                                                {/* Sugar Level */}
-                                                <div className="flex items-center mb-2">
-                                                    <label className="mr-2">Sugar:</label>
-                                                    <select
-                                                        value={editedOptions.sugarLevel}
-                                                        onChange={(e) =>
-                                                            setEditedOptions((prev: any) => ({
-                                                                ...prev,
-                                                                sugarLevel: e.target.value,
-                                                            }))
-                                                        }
-                                                        className="border rounded px-2 py-1"
-                                                    >
-                                                        {item.options?.sugarLevels?.map((level: string) => (
-                                                            <option key={level} value={level}>
-                                                                {level}%
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                {/* Ice Level */}
-                                                <div className="flex items-center mb-2">
-                                                    <label className="mr-2">Ice:</label>
-                                                    <select
-                                                        value={editedOptions.iceLevel}
-                                                        onChange={(e) =>
-                                                            setEditedOptions((prev: any) => ({
-                                                                ...prev,
-                                                                iceLevel: e.target.value,
-                                                            }))
-                                                        }
-                                                        className="border rounded px-2 py-1"
-                                                    >
-                                                        {item.options?.iceLevels?.map((level: string) => (
-                                                            <option key={level} value={level}>
-                                                                {level}%
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                {/* Toppings */}
-                                                <div>
-                                                    <label className="mr-2">Toppings:</label>
-                                                    <select
-                                                        multiple
-                                                        value={editedOptions.toppings}
-                                                        onChange={(e) =>
-                                                            setEditedOptions((prev: any) => ({
-                                                                ...prev,
-                                                                toppings: Array.from(e.target.selectedOptions, (option) =>
-                                                                    option.value
-                                                                ),
-                                                            }))
-                                                        }
-                                                        className="border rounded px-2 py-1"
-                                                    >
-                                                        {item.options?.toppings?.map((topping: string) => (
-                                                            <option key={topping} value={topping}>
-                                                                {topping}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex justify-between">
-                                            <span>
-                                                {item.name}{' '}
-                                                <span className="text-sm text-gray-500">x{item.quantity}</span>
-                                            </span>
-                                            <span>
-                                                {(item.price * item.quantity).toLocaleString('vi-VN')} VND
-                                            </span>
-                                        </div>
-                                    )}
+                                    <div className="flex justify-between">
+                                        <span>
+                                            {item.name}{' '}
+                                            <span className="text-sm text-gray-500">x{item.quantity}</span>
+                                        </span>
+                                        <span>
+                                            {(item.price * item.quantity).toLocaleString('vi-VN')} VND
+                                        </span>
+                                    </div>
                                     {item.options && (
                                         <ul className="text-sm text-gray-500 mt-1 pl-4 list-disc">
-                                            {item.options.sugarLevels && <li>Sugar: {item.options.sugarLevels}%</li>}
-                                            {item.options.iceLevels && <li>Ice: {item.options.iceLevels}%</li>}
+                                            {item.options.sugarLevel && (
+                                                <li>Sugar: {item.options.sugarLevel}%</li>
+                                            )}
+                                            {item.options.iceLevel && (
+                                                <li>Ice: {item.options.iceLevel}%</li>
+                                            )}
                                             {item.options.toppings && item.options.toppings.length > 0 && (
                                                 <li>Toppings: {item.options.toppings.join(', ')}</li>
                                             )}
                                         </ul>
                                     )}
-                                    <div className="flex justify-between mt-2">
-                                        <button
-                                            className="text-blue-500 font-medium hover:underline"
-                                            onClick={() => startEditingItem(index, item)}
-                                        >
-                                            Edit
-                                        </button>
+                                    <div className="flex justify-end mt-2">
                                         <button
                                             className="text-red-500 font-medium hover:underline"
                                             onClick={() => handleRemoveItem(index)}
                                         >
-                                            Remove
+                                            Xóa
                                         </button>
                                     </div>
                                 </li>
@@ -207,14 +86,14 @@ export default function OrderPage() {
 
                 {/* Total */}
                 <div className="flex justify-between font-bold text-gray-800 border-t pt-4">
-                    <span>Total</span>
+                    <span>Thành tiền</span>
                     <span>{totalPrice.toLocaleString('vi-VN')} VND</span>
                 </div>
 
                 {/* Payment Options */}
                 {order.length > 0 && totalPrice > 0 && (
                     <div className="mt-6">
-                        <h2 className="text-lg font-semibold mb-4">Select Payment Method</h2>
+                        <h2 className="text-lg font-semibold mb-4">Lựa chọn phương thức thanh toán</h2>
                         <div className="flex justify-around mb-4">
                             <button
                                 className={`px-4 py-2 rounded ${
@@ -224,7 +103,7 @@ export default function OrderPage() {
                                 }`}
                                 onClick={() => setPaymentMethod('cash')}
                             >
-                                Cash
+                                Tiền mặt
                             </button>
                             <button
                                 className={`px-4 py-2 rounded ${
@@ -234,7 +113,7 @@ export default function OrderPage() {
                                 }`}
                                 onClick={() => setPaymentMethod('qr')}
                             >
-                                QR Code
+                                Mã QR
                             </button>
                         </div>
 
@@ -242,20 +121,19 @@ export default function OrderPage() {
                         {paymentMethod === 'cash' && (
                             <div className="text-center">
                                 <p className="text-gray-700 mb-4">
-                                    Please pay <strong>{totalPrice.toLocaleString('vi-VN')} VND</strong> in cash at the
-                                    counter.
+                                    Vui lòng thanh toán <strong>{totalPrice.toLocaleString('vi-VN')} VND</strong> tiền mặt tại quầy thanh toán.
                                 </p>
                                 <button
                                     className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition"
                                     onClick={handleCashSubmit}
                                 >
-                                    Submit Order
+                                    Xác nhận đơn hàng
                                 </button>
                             </div>
                         )}
                         {paymentMethod === 'qr' && (
                             <div className="text-center">
-                                <h3 className="text-sm font-medium mb-2">Scan this QR Code to Pay</h3>
+                                <h3 className="text-sm font-medium mb-2">Quét mã QR dưới đây để thanh toán</h3>
                                 <img
                                     src={qrCodeUrl}
                                     alt="QR Code for Payment"
@@ -265,7 +143,7 @@ export default function OrderPage() {
                                     className="bg-blue-500 text-white px-4 py-2 rounded-full mt-4 hover:bg-blue-600 transition"
                                     onClick={handleQrPaid}
                                 >
-                                    Confirm Paid
+                                    Xác nhận thanh toán
                                 </button>
                             </div>
                         )}
@@ -273,7 +151,7 @@ export default function OrderPage() {
                 )}
 
                 {/* Footer */}
-                <p className="text-center text-xs text-gray-500 mt-6">Thank you for dining with us!</p>
+                <p className="text-center text-xs text-gray-500 mt-6">Cảm ơn bạn đã ghé thăm quán của chúng tôi!</p>
             </div>
         </main>
     );
