@@ -79,6 +79,7 @@ export default function FoodsPage() {
                         <Image
                             src={food.image}
                             alt={food.name}
+                            style={{ objectFit: 'cover' }}
                             width={300}
                             height={300}
                             className="w-72 h-72 object-cover mx-auto"

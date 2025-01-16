@@ -59,6 +59,7 @@ export default function HomePage() {
                             <Image
                                 src={drink.image}
                                 alt={drink.name}
+                                style={{ objectFit: 'cover' }}
                                 width={150}
                                 height={150}
                                 className="mb-2"
@@ -84,6 +85,7 @@ export default function HomePage() {
                             <Image
                                 src={food.image}
                                 alt={food.name}
+                                style={{ objectFit: 'cover' }}
                                 width={150}
                                 height={150}
                                 className="mb-2"

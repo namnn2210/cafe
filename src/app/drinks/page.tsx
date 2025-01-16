@@ -82,12 +82,6 @@ export default function DrinksPage() {
         }
     };
 
-    // Reset pagination when the search term changes
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-        setCurrentPage(1); // Reset to the first page
-    };
-
     const handleCancel = () => {
         // @ts-ignore
         onOpenChange(false);
@@ -130,6 +124,7 @@ export default function DrinksPage() {
                         <Image
                             src={drink.image}
                             alt={drink.name}
+                            style={{ objectFit: 'cover' }}
                             width={300}
                             height={300}
                             className="w-72 h-72 object-cover mx-auto"
