@@ -6,10 +6,11 @@ import { Pagination, Spinner } from '@nextui-org/react';
 import Image from 'next/image';
 import BASE_API_URL from '@/config/config';
 import {fetchFromAPI} from "@/utils/api";
+import Food from "@/output/food"
 
 export default function FoodsPage() {
     const { addToOrder } = useOrder();
-    const [foods, setFoods] = useState([]);
+    const [foods, setFoods] = useState<Food[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true); // State for loading
@@ -30,11 +31,11 @@ export default function FoodsPage() {
         fetchFoods();
     }, []);
 
-    const handleAddToOrder = (food: { id: number; name: string; price: number }) => {
+    const handleAddToOrder = (food: Food) => {
         addToOrder(food);
     };
 
-    const filteredFoods = foods.filter((food: any) =>
+    const filteredFoods = foods.filter((food) =>
         food.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -86,7 +87,7 @@ export default function FoodsPage() {
 
             {/* Food Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {paginatedFoods.map((food: any) => (
+                {paginatedFoods.map((food: Food) => (
                     <div
                         key={food.id}
                         className="p-4 transition text-center cursor-pointer"

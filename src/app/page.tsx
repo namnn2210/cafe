@@ -6,10 +6,12 @@ import Image from 'next/image';
 import { Spinner } from '@nextui-org/react';
 import BASE_API_URL from '@/config/config';
 import {fetchFromAPI} from "@/utils/api";
+import Drink from "@/output/drink";
+import Food from "@/output/food"
 
 export default function HomePage() {
-    const [drinks, setDrinks] = useState([]);
-    const [foods, setFoods] = useState([]);
+    const [drinks, setDrinks] = useState<Drink[]>([]);
+    const [foods, setFoods] = useState<Food[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Fetch data from API
@@ -73,7 +75,7 @@ export default function HomePage() {
                     </Link>
                 </div>
                 <div className="flex overflow-x-scroll space-x-4 scrollbar-hide">
-                    {drinks.map((drink: any) => (
+                    {drinks.map((drink: Drink) => (
                         <div key={drink.id} className="min-w-[150px] p-4 transition text-center">
                             <Image
                                 src={`${BASE_API_URL}${drink.image}`}
@@ -98,7 +100,7 @@ export default function HomePage() {
                     </Link>
                 </div>
                 <div className="flex overflow-x-scroll space-x-4 scrollbar-hide">
-                    {foods.map((food: any) => (
+                    {foods.map((food: Food) => (
                         <div key={food.id} className="min-w-[150px] p-4 transition text-center">
                             <Image
                                 src={`${BASE_API_URL}${food.image}`}
