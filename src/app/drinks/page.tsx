@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     Modal,
     ModalContent,
@@ -16,36 +16,18 @@ import {
     Pagination,
 } from "@nextui-org/react";
 import Image from 'next/image';
-import { useOrder } from "../context/OrderContext";
+import {useOrder} from "../context/OrderContext";
+import {fetchFromAPI} from '@/utils/api';
+import { Spinner } from '@nextui-org/react';
+import BASE_API_URL from '@/config/config';
+import Drink from '@/output/drink';
 
-type Drink = {
-    id: number;
-    name: string;
-    price: number;
-    image: string;
-    options: {
-        sugarLevels: string[];
-        iceLevels: string[];
-        toppings: string[];
-    };
-};
-
-const drinks: Drink[] = [
-    { id: 1, name: "Bạc sỉu", price: 30000, image: "https://placehold.co/300x300?text=Bạc+sỉu", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Pudding", "Boba", "Whipped Cream"] } },
-    { id: 2, name: "Đen đá", price: 30000, image: "https://placehold.co/300x300?text=Đen+đá", options: { sugarLevels: ["100", "70", "50"], iceLevels: ["100", "50"], toppings: ["Grass Jelly", "Boba"] } },
-    { id: 3, name: "Nâu đá", price: 35000, image: "https://placehold.co/300x300?text=Nâu+đá", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Pudding", "Boba", "Whipped Cream", "Grass Jelly"] } },
-    { id: 4, name: "Trà đào cam sả", price: 40000, image: "https://placehold.co/300x300?text=Trà+đào", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Pudding", "Boba", "Whipped Cream", "Grass Jelly"] } },
-    { id: 5, name: "Trà sữa truyền thống", price: 45000, image: "https://placehold.co/300x300?text=Trà+sữa", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Pudding", "Boba", "Whipped Cream"] } },
-    { id: 6, name: "Matcha Latte", price: 50000, image: "https://placehold.co/300x300?text=Matcha+Latte", options: { sugarLevels: ["100", "70", "50"], iceLevels: ["100", "50"], toppings: ["Grass Jelly", "Boba"] } },
-    { id: 7, name: "Caramel Macchiato", price: 55000, image: "https://placehold.co/300x300?text=Caramel", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Pudding", "Boba", "Whipped Cream"] } },
-    { id: 8, name: "Espresso", price: 40000, image: "https://placehold.co/300x300?text=Espresso", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: ["Whipped Cream"] } },
-    { id: 9, name: "Mocha", price: 60000, image: "https://placehold.co/300x300?text=Mocha", options: { sugarLevels: ["100", "70", "50"], iceLevels: ["100", "50"], toppings: ["Grass Jelly", "Boba"] } },
-    { id: 10, name: "Americano", price: 35000, image: "https://placehold.co/300x300?text=Americano", options: { sugarLevels: ["100", "70", "50", "30"], iceLevels: ["100", "70", "50", "30"], toppings: [] } },
-];
 
 export default function DrinksPage() {
-    const { addToOrder } = useOrder();
-    const { isOpen, onOpenChange } = useDisclosure();
+    const {addToOrder} = useOrder();
+    const {isOpen, onOpenChange} = useDisclosure();
+    const [drinks, setDrinks] = useState<Drink[]>([]);
+    const [loading, setLoading] = useState(true);
     const [selectedDrink, setSelectedDrink] = useState<Drink | null>(null);
     const [selectedSugarLevel, setSelectedSugarLevel] = useState<string>("");
     const [selectedIceLevel, setSelectedIceLevel] = useState<string>("");
@@ -53,6 +35,30 @@ export default function DrinksPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
+
+    // Fetch drinks from API
+    useEffect(() => {
+        const fetchDrinks = async () => {
+            try {
+                const data = await fetchFromAPI('/products/category/1');
+                setDrinks(data);
+            } catch (error) {
+                console.error('Error fetching drinks:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDrinks();
+    }, []);
+
+    if (loading) {
+        return (
+            <main className="p-4 flex items-center justify-center h-screen bg-[var(--background)]">
+                <Spinner size="lg" color="primary" />
+            </main>
+        );
+    }
 
     const handleCustomize = (drink: Drink) => {
         setSelectedDrink(drink);
@@ -122,9 +128,9 @@ export default function DrinksPage() {
                         onClick={() => handleCustomize(drink)}
                     >
                         <Image
-                            src={drink.image}
+                            src={`${BASE_API_URL}${drink.image}`}
                             alt={drink.name}
-                            style={{ objectFit: 'cover' }}
+                            style={{objectFit: 'cover'}}
                             width={300}
                             height={300}
                             className="w-72 h-72 object-cover mx-auto"
@@ -158,7 +164,7 @@ export default function DrinksPage() {
                                     value={selectedSugarLevel}
                                     onValueChange={(value) => setSelectedSugarLevel(value)}
                                 >
-                                    {selectedDrink?.options.sugarLevels.map((level: string, index: number) => (
+                                    {selectedDrink?.options.sugarLevels.map((level, index) => (
                                         <Radio key={index} value={level}>
                                             {level}%
                                         </Radio>
@@ -173,7 +179,7 @@ export default function DrinksPage() {
                                     value={selectedIceLevel}
                                     onValueChange={(value) => setSelectedIceLevel(value)}
                                 >
-                                    {selectedDrink?.options.iceLevels.map((level: string, index: number) => (
+                                    {selectedDrink?.options.iceLevels.map((level, index) => (
                                         <Radio key={index} value={level}>
                                             {level}%
                                         </Radio>
@@ -188,7 +194,7 @@ export default function DrinksPage() {
                                     value={selectedToppings}
                                     onValueChange={setSelectedToppings}
                                 >
-                                    {selectedDrink?.options.toppings.map((topping: string, index: number) => (
+                                    {selectedDrink?.options.toppings.map((topping, index) => (
                                         <Checkbox key={index} value={topping}>
                                             {topping}
                                         </Checkbox>

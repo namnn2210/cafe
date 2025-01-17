@@ -1,34 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOrder } from '../context/OrderContext';
-import { Pagination } from '@nextui-org/react';
+import { Pagination, Spinner } from '@nextui-org/react';
 import Image from 'next/image';
-
-const foods = [
-    { id: 1, name: 'Khoai tây chiên', price: 30000, image: 'https://placehold.co/300x300?text=Khoai+t%C3%A2y+chi%C3%AAn' },
-    { id: 2, name: 'Nem chua rán (5 cái)', price: 50000, image: 'https://placehold.co/300x300?text=Nem+chua+r%C3%A1n' },
-    { id: 3, name: 'Bánh tráng nướng', price: 20000, image: 'https://placehold.co/300x300?text=B%C3%A1nh+tr%C3%A1ng+n%C6%B0%E1%BB%9Bng' },
-    { id: 4, name: 'Gỏi cuốn', price: 25000, image: 'https://placehold.co/300x300?text=G%E1%BB%8Fi+cu%E1%BB%91n' },
-    { id: 5, name: 'Chả giò', price: 35000, image: 'https://placehold.co/300x300?text=Ch%E1%BA%A3+gi%C3%B2' },
-    { id: 6, name: 'Bánh mì pate', price: 30000, image: 'https://placehold.co/300x300?text=B%C3%A1nh+m%C3%AC+pate' },
-    { id: 7, name: 'Phở bò', price: 60000, image: 'https://placehold.co/300x300?text=Ph%E1%BB%9F+b%C3%B2' },
-    { id: 8, name: 'Hủ tiếu', price: 55000, image: 'https://placehold.co/300x300?text=H%E1%BB%A7+ti%E1%BA%BFu' },
-    { id: 9, name: 'Bún thịt nướng', price: 50000, image: 'https://placehold.co/300x300?text=B%C3%BAn+th%E1%BB%8Bt+n%C6%B0%E1%BB%9Bng' },
-    { id: 10, name: 'Mì xào hải sản', price: 70000, image: 'https://placehold.co/300x300?text=M%C3%AC+x%C3%A0o+h%E1%BA%A3i+s%E1%BA%A3n' },
-];
+import BASE_API_URL from '@/config/config';
+import {fetchFromAPI} from "@/utils/api";
 
 export default function FoodsPage() {
     const { addToOrder } = useOrder();
+    const [foods, setFoods] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true); // State for loading
     const itemsPerPage = 4;
+
+    useEffect(() => {
+        const fetchFoods = async () => {
+            try {
+                const data = await fetchFromAPI(`/products/category/2`);
+                setFoods(data);
+            } catch (error) {
+                console.error('Error fetching foods:', error);
+            } finally {
+                setLoading(false); // Stop loading spinner after data is fetched
+            }
+        };
+
+        fetchFoods();
+    }, []);
 
     const handleAddToOrder = (food: { id: number; name: string; price: number }) => {
         addToOrder(food);
     };
 
-    const filteredFoods = foods.filter((food) =>
+    const filteredFoods = foods.filter((food: any) =>
         food.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -38,10 +44,19 @@ export default function FoodsPage() {
         currentPage * itemsPerPage
     );
 
+    if (loading) {
+        return (
+            <main className="p-4 flex items-center justify-center h-screen bg-[var(--background)]">
+                <Spinner size="lg" color="primary" /> {/* Spinner while loading */}
+            </main>
+        );
+    }
+
     return (
         <main className="p-4 pb-20 bg-[var(--background)]">
             <h1 className="text-2xl font-bold mb-4 text-center">Đồ ăn</h1>
 
+            {/* Search Bar */}
             <div className="relative mb-6">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                     <svg
@@ -69,19 +84,20 @@ export default function FoodsPage() {
                 />
             </div>
 
+            {/* Food Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {paginatedFoods.map((food) => (
+                {paginatedFoods.map((food: any) => (
                     <div
                         key={food.id}
                         className="p-4 transition text-center cursor-pointer"
                         onClick={() => handleAddToOrder(food)}
                     >
                         <Image
-                            src={food.image}
+                            src={`${BASE_API_URL}${food.image}`}
                             alt={food.name}
-                            style={{ objectFit: 'cover' }}
                             width={300}
                             height={300}
+                            style={{ objectFit: 'cover' }}
                             className="w-72 h-72 object-cover mx-auto"
                         />
                         <h2 className="text-lg font-bold mt-4">{food.name}</h2>
@@ -92,6 +108,7 @@ export default function FoodsPage() {
                 ))}
             </div>
 
+            {/* Pagination */}
             <div className="flex justify-center mt-6">
                 <Pagination
                     total={totalPages}
