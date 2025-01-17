@@ -59,13 +59,13 @@ export default function OrderPage() {
                                     {item.options && (
                                         <ul className="text-sm text-gray-500 mt-1 pl-4 list-disc">
                                             {item.options.sugarLevel && (
-                                                <li>Sugar: {item.options.sugarLevel}%</li>
+                                                <li>Đường: {item.options.sugarLevel}%</li>
                                             )}
                                             {item.options.iceLevel && (
-                                                <li>Ice: {item.options.iceLevel}%</li>
+                                                <li>Đá: {item.options.iceLevel}%</li>
                                             )}
                                             {item.options.toppings && item.options.toppings.length > 0 && (
-                                                <li>Toppings: {item.options.toppings.join(', ')}</li>
+                                                <li>Topping: {item.options.toppings.join(', ')}</li>
                                             )}
                                         </ul>
                                     )}

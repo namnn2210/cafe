@@ -3,7 +3,7 @@ type Drink = {
     name: string;
     price: number;
     image: string;
-    options: {
+    option_groups: {
         sugarLevels: string[];
         iceLevels: string[];
         toppings: string[];

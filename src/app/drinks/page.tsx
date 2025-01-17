@@ -62,8 +62,8 @@ export default function DrinksPage() {
 
     const handleCustomize = (drink: Drink) => {
         setSelectedDrink(drink);
-        setSelectedSugarLevel(drink.options.sugarLevels[0]);
-        setSelectedIceLevel(drink.options.iceLevels[0]);
+        setSelectedSugarLevel(drink.option_groups.sugarLevels[0]);
+        setSelectedIceLevel(drink.option_groups.iceLevels[0]);
         setSelectedToppings([]);
         // @ts-expect-error: Known type issue with onOpenChange
         onOpenChange(true);
@@ -164,7 +164,7 @@ export default function DrinksPage() {
                                     value={selectedSugarLevel}
                                     onValueChange={(value) => setSelectedSugarLevel(value)}
                                 >
-                                    {selectedDrink?.options.sugarLevels.map((level, index) => (
+                                    {selectedDrink?.option_groups.sugarLevels.map((level, index) => (
                                         <Radio key={index} value={level}>
                                             {level}%
                                         </Radio>
@@ -179,7 +179,7 @@ export default function DrinksPage() {
                                     value={selectedIceLevel}
                                     onValueChange={(value) => setSelectedIceLevel(value)}
                                 >
-                                    {selectedDrink?.options.iceLevels.map((level, index) => (
+                                    {selectedDrink?.option_groups.iceLevels?.map((level, index) => (
                                         <Radio key={index} value={level}>
                                             {level}%
                                         </Radio>
@@ -194,7 +194,7 @@ export default function DrinksPage() {
                                     value={selectedToppings}
                                     onValueChange={setSelectedToppings}
                                 >
-                                    {selectedDrink?.options.toppings.map((topping, index) => (
+                                    {selectedDrink?.option_groups.toppings?.map((topping, index) => (
                                         <Checkbox key={index} value={topping}>
                                             {topping}
                                         </Checkbox>
